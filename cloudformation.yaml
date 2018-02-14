@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: CloudFormation template for an S3 backed website.
+
+Outputs:
+  Arn:
+    Description: Arn of the bucket
+    Value: !GetAtt Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-Arn
+  WebsiteURL:
+    Description: URL of the website
+    Value: !GetAtt WebsiteURL
+    Export:
+      Name: !Sub ${AWS::StackName}-WebsiteURL
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name of the bucket
+    MinLength: 3
+    MaxLength: 59
+  Owner:
+    Type: String
+    Description: Contact person for the bucket
+    Default: !Ref AWS::AccountId
+  Support:
+    Type: String
+    Description: Support contact for the bucket
+    Default: n/a
+  UseCase:
+    Type: String
+    Description: Use case, e.g. the purpose of the website
+    Default: n/a
+
+Resources:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub ${BucketName}
+    AccessControl: PublicRead
+    WebsiteConfiguration:
+      IndexDocument: index.html
+    LoggingConfiguration:
+      DestinationBucketName: !Sub ${BucketName}-sal
+    Tags:
+      - Key: Owner
+        Value: !Sub Owner
+      - Key: Support
+        Value: !Sub Support
+      - Key: Use Case
+        Value: !Sub UseCase
+
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub ${BucketName}-sal
+    AccessControl: LogDeliveryWrite
+    LifecycleConfiguration:
+      Rules:
+        ExpirationInDays: 180
+        Transitions:
+          StorageClass: GLACIER
+          TransitionInDays: 30
+    Tags:
+      - Key: Owner
+        Value: !Sub Owner
+      - Key: Support
+        Value: !Sub Support
+      - Key: Use Case
+        Value: !Sub UseCase

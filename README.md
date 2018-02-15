@@ -4,15 +4,11 @@ CloudFormation template for an S3 backed website.
 
 **Note:** this template is still WIP
 
-## Parameters
+## Input & Output Parameters
 
-- Bucket Name
+The template only requires a bucket name as input parameter.
 
-The following parameters are optional and used to further distinguish resources from multiple stacks, e.g. to drive customer cost analysis.
-
-- Owner
-- Support
-- Use Case
+The template's output is the `Arn` of the bucket serving the static website content, as well as the HTTP & HTTPS endpoints.
 
 ## Resources
 
